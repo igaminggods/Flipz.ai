@@ -15,6 +15,12 @@ body { background:
   html, body { overscroll-behavior: none; touch-action: manipulation; }
 }
 
+/* Hero logo sizing */
+.hero-logo{width:560px;height:160px}
+@media (max-width: 640px){
+  .hero-logo{width:320px;height:92px}
+}
+
 /* Custom theme for the landing page */
 @media (prefers-color-scheme: dark) { body { color: #e7e7ea; } }
 
