@@ -183,3 +183,23 @@ body { background:
   .flip-cta{bottom:22px}
   .btn-xl{padding:.85rem 1.4rem;font-size:.95rem}
 }
+
+/* General mobile optimizations */
+@media (max-width: 640px){
+  .container-max{padding-left:.75rem;padding-right:.75rem}
+  .section-title{font-size:1.5rem}
+  .display-title{font-size:2rem}
+  .btn-primary,.btn-secondary{padding:.65rem 1rem;font-size:.95rem}
+  .pill{padding:.2rem .6rem;font-size:.7rem}
+  .legend{gap:.75rem;font-size:.85rem}
+  .title-icon{width:28px;height:28px}
+  .guide-footnote{padding:.5rem .9rem;font-size:.9rem}
+  .scan-card{padding:14px}
+  .scan-row{padding:8px 4px}
+  .scan-slot{padding:10px}
+  .scan-actions{flex-direction:column;align-items:stretch}
+  .scan-actions .btn-primary,
+  .scan-actions .btn-secondary,
+  .scan-actions .btn-danger,
+  .scan-actions .btn-muted{width:100%;justify-content:center}
+}
