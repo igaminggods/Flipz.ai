@@ -40,7 +40,7 @@ body { background:
 /* Glitching logo */
 .logo-glitch{position:relative;display:inline-block}
 .logo-glitch img{display:block;filter:drop-shadow(0 8px 22px rgba(0,0,0,.35));animation:glBase 4s infinite steps(60)}
-.logo-glitch::before,.logo-glitch::after{content:"";position:absolute;inset:0;background:url('/api/coinflip/image/logo1') center/contain no-repeat;mix-blend-mode:screen;opacity:.0;animation:gl1 1.6s infinite ease-in-out}
+.logo-glitch::before,.logo-glitch::after{content:"";position:absolute;inset:0;background:url('/coinflip/Logo1.png') center/contain no-repeat;mix-blend-mode:screen;opacity:.0;animation:gl1 1.6s infinite ease-in-out}
 .logo-glitch::after{mix-blend-mode:screen;animation:gl2 1.8s infinite ease-in-out}
 @keyframes gl1{0%,100%{transform:none;opacity:0}
  4%{transform:translate(-3px,2px) skewX(2deg);opacity:.6;filter:hue-rotate(40deg) saturate(140%)}

@@ -12,8 +12,8 @@ function resolveImagePath(name: string) {
   };
   const file = map[name.toLowerCase()];
   if (!file) return null;
-  // web/ is the cwd; Images is a sibling of web
-  return path.resolve(process.cwd(), "..", "Images", file);
+  // serve from public/coinflip inside the app root for Vercel
+  return path.resolve(process.cwd(), "public", "coinflip", file);
 }
 
 export async function GET(_: Request, { params }: { params: { name: string } }) {
