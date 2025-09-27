@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { readFile } from "fs/promises";
 import path from "path";
 
@@ -16,7 +16,7 @@ function resolveImagePath(name: string) {
   return path.resolve(process.cwd(), "public", "coinflip", file);
 }
 
-export async function GET(_: Request, { params }: { params: { name: string } }) {
+export async function GET(_: NextRequest, { params }: { params: { name: string } }): Promise<NextResponse> {
   try {
     const p = resolveImagePath(params.name);
     if (!p) return new NextResponse("Not found", { status: 404 });
