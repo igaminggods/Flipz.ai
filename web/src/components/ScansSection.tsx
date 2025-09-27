@@ -19,9 +19,8 @@ export default function ScansSection(){
       } catch {}
     };
     const onSelected = (e: Event) => {
-      const detail: any = (e as CustomEvent).detail;
-      // right/second scan ('multiply' in cards) => 4 flips; left/first ('instant') => 2 flips
-      const mode = detail?.mode;
+      const custom = e as CustomEvent<{ mode?: "instant" | "multiply" } | undefined>;
+      const mode = custom.detail?.mode;
       setMaxFlips(mode === 'multiply' ? 4 : 2);
       setShowGame(true);
       try {
