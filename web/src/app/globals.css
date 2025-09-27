@@ -10,6 +10,11 @@ body { background:
   linear-gradient(180deg,#0b0d22 0%,#070817 60%,#060611 100%);
   color: var(--foreground); font-family: var(--font-sans), ui-sans-serif, system-ui; }
 
+/* Prevent unintended pinch zoom artifacts */
+@media (max-width: 640px){
+  html, body { overscroll-behavior: none; touch-action: manipulation; }
+}
+
 /* Custom theme for the landing page */
 @media (prefers-color-scheme: dark) { body { color: #e7e7ea; } }
 
