@@ -44,7 +44,7 @@ export default function CoinflipCards() {
 
   const [lockUntil, setLockUntil] = useState<number | null>(null);
   const [selected, setSelected] = useState<Mode | null>(null);
-  const disableLocks = false;
+  const disableLocks = true;
 
   useEffect(() => {
     if (disableLocks) {

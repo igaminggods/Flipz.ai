@@ -12,7 +12,7 @@ function getRemainingMs(until: number | null) {
 export default function ScanLock() {
   const [lockedUntil, setLockedUntil] = useState<number | null>(null);
   const [scanning, setScanning] = useState(false);
-  const disableLocks = false;
+  const disableLocks = true;
   const steps = [
     "Scanning casino database…",
     "Analyzing CoinFlip algorithms…",
