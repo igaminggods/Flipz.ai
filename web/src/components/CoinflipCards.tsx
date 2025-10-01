@@ -45,9 +45,11 @@ export default function CoinflipCards() {
 
   const [lockUntil, setLockUntil] = useState<number | null>(null);
   const [selected, setSelected] = useState<Mode | null>(null);
+  // flip to true for debugging to disable lock behavior
   const disableLocks = false;
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     if (disableLocks) {
       try {
         localStorage.removeItem(LOCK_KEY);
@@ -58,10 +60,12 @@ export default function CoinflipCards() {
       return;
     }
     const l = localStorage.getItem(LOCK_KEY);
-    const s = localStorage.getItem(SELECTED_KEY) as Mode | null;
-    setLockUntil(l ? parseInt(l, 10) : null);
+    const sRaw = localStorage.getItem(SELECTED_KEY);
+    const lParsed = l ? parseInt(l, 10) : null;
+    const s = (sRaw === 'instant' || sRaw === 'multiply') ? (sRaw as Mode) : null;
+    setLockUntil(lParsed && !Number.isNaN(lParsed) ? lParsed : null);
     setSelected(s);
-  }, []);
+  }, [disableLocks]);
 
   useEffect(() => {
     if (!lockUntil) return;
@@ -69,8 +73,10 @@ export default function CoinflipCards() {
       if (Date.now() > lockUntil) {
         setLockUntil(null);
         setSelected(null);
-        localStorage.removeItem(LOCK_KEY);
-        localStorage.removeItem(SELECTED_KEY);
+        try {
+          localStorage.removeItem(LOCK_KEY);
+          localStorage.removeItem(SELECTED_KEY);
+        } catch {}
       }
     }, 1000);
     return () => clearInterval(id);
@@ -92,8 +98,10 @@ export default function CoinflipCards() {
       return;
     }
     const until = Date.now() + 24 * 60 * 60 * 1000;
-    localStorage.setItem(LOCK_KEY, String(until));
-    localStorage.setItem(SELECTED_KEY, mode);
+    try {
+      localStorage.setItem(LOCK_KEY, String(until));
+      localStorage.setItem(SELECTED_KEY, mode);
+    } catch {}
     setLockUntil(until);
     setSelected(mode);
     try { window.dispatchEvent(new CustomEvent('scan-selected', { detail: { mode } })); } catch {}
@@ -106,8 +114,8 @@ export default function CoinflipCards() {
     remaining: number,
     mode: Mode
   ) => {
-    const isLocked = !disableLocks && lockRemaining > 0 && selected !== mode;
-    const isSelected = disableLocks ? selected === mode : (selected === mode && lockRemaining > 0);
+    const isLocked = !disableLocks && lockRemaining > 0 && selected !== null && selected !== mode;
+    const isSelected = selected === mode && (!disableLocks ? lockRemaining > 0 : true);
     return (
       <div className="scan-card">
         <div className="flex items-center justify-between mb-3">
