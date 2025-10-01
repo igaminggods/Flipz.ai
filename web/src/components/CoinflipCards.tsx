@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import GlowCard from "@/components/GlowCard";
 
 type Mode = "instant" | "multiply";
 
@@ -180,14 +179,19 @@ export default function CoinflipCards() {
                 href="https://track.intrklnkmain.com/visit/?bta=48672&brand=oscarspin&utm_campaign=CoinFlip"
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={(e) => {
+                onClick={() => {
                   // Let the navigation occur but still fire the pixel
                   try {
-                    // Fire Meta Pixel custom event for Access Gateway clicks
-                    // @ts-ignore - fbq is injected globally by Meta Pixel script
-                    if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
-                      (window as any).fbq('trackCustom', 'GatewayAccessClick');
-                    }
+                // Fire Meta Pixel custom event for Access Gateway clicks if available on window
+                const fbq =
+                  typeof window !== 'undefined'
+                    ? (window as unknown as {
+                        fbq?: (event: string, name: string, ...args: unknown[]) => void;
+                      }).fbq
+                    : undefined;
+                if (typeof fbq === 'function') {
+                  fbq('trackCustom', 'GatewayAccessClick');
+                }
                   } catch {}
                 }}
               >

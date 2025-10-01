@@ -15,9 +15,14 @@ export default function CoinflipGate() {
           setClicked(true);
           try {
             // Fire Meta Pixel custom event for Access Gateway clicks
-            // @ts-ignore - fbq is injected globally by Meta Pixel script
-            if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
-              (window as any).fbq('trackCustom', 'GatewayAccessClick');
+            const fbq =
+              typeof window !== 'undefined'
+                ? (window as unknown as {
+                    fbq?: (event: string, name: string, ...args: unknown[]) => void;
+                  }).fbq
+                : undefined;
+            if (typeof fbq === 'function') {
+              fbq('trackCustom', 'GatewayAccessClick');
             }
           } catch {}
         }}
