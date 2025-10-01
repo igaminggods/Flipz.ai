@@ -12,13 +12,14 @@ function getRemainingMs(until: number | null) {
 export default function ScanLock() {
   const [lockedUntil, setLockedUntil] = useState<number | null>(null);
   const [scanning, setScanning] = useState(false);
-  const disableLocks = true;
+  const disableLocks = false;
   const steps = [
     "Scanning casino database…",
     "Analyzing CoinFlip algorithms…",
     "Extracting optimal betting strategies…",
   ];
   const [stepIdx, setStepIdx] = useState(0);
+  const [nowTick, setNowTick] = useState<number>(Date.now());
 
   useEffect(() => {
     if (disableLocks) {
@@ -41,7 +42,15 @@ export default function ScanLock() {
     return () => clearInterval(id);
   }, [lockedUntil]);
 
-  const remaining = useMemo(() => disableLocks ? 0 : getRemainingMs(lockedUntil), [lockedUntil, scanning, disableLocks]);
+  useEffect(() => {
+    const id = setInterval(() => setNowTick(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const remaining = useMemo(
+    () => (disableLocks ? 0 : getRemainingMs(lockedUntil)),
+    [lockedUntil, scanning, disableLocks, nowTick]
+  );
 
   const onScan = async () => {
     setScanning(true);
@@ -75,9 +84,9 @@ export default function ScanLock() {
     const h = Math.floor(s / 3600);
     const m = Math.floor((s % 3600) / 60);
     const ss = s % 60;
-    return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${ss
+    return `${h.toString().padStart(2, "0")}:${m
       .toString()
-      .padStart(2, "0")}`;
+      .padStart(2, "0")}:${ss.toString().padStart(2, "0")}`;
   };
 
   const disabled = scanning || (!disableLocks && remaining > 0);
@@ -90,7 +99,9 @@ export default function ScanLock() {
       {!disableLocks && remaining > 0 ? (
         <div className="space-y-3">
           <div className="text-sm subtle">Scan available again in</div>
-          <div className="text-3xl font-bold tabular-nums">{format(remaining)}</div>
+          <div className="text-3xl font-bold tabular-nums">
+            <span style={{ display: 'inline-block', minWidth: '8ch' }}>{format(remaining)}</span>
+          </div>
           <button className="btn-primary" disabled>
             Locked for 24h
           </button>

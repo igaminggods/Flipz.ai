@@ -35,7 +35,9 @@ function format(ms: number) {
   const h = Math.floor(s / 3600);
   const m = Math.floor((s % 3600) / 60);
   const ss = s % 60;
-  return `${h}h ${m}m ${ss}s`;
+  return `${h.toString().padStart(2, "0")}h ${m
+    .toString()
+    .padStart(2, "0")}m ${ss.toString().padStart(2, "0")}s`;
 }
 
 export default function CoinflipCards() {
@@ -44,7 +46,7 @@ export default function CoinflipCards() {
 
   const [lockUntil, setLockUntil] = useState<number | null>(null);
   const [selected, setSelected] = useState<Mode | null>(null);
-  const disableLocks = true;
+  const disableLocks = false;
 
   useEffect(() => {
     if (disableLocks) {
@@ -142,7 +144,15 @@ export default function CoinflipCards() {
         </div>
         <div className="scan-row">
           <div className="scan-label">⏱ Time Until Patch:</div>
-          <div className={`scan-value ${remaining <= 0 ? 'pill-danger' : 'pill-badge'}`}>{remaining <= 0 ? 'PATCHED' : format(remaining)}</div>
+          <div className={`scan-value ${remaining <= 0 ? 'pill-danger' : 'pill-badge'}`}>
+            {remaining <= 0 ? (
+              'PATCHED'
+            ) : (
+              <span className="tabular-nums" style={{ display: 'inline-block', minWidth: '10ch' }}>
+                {format(remaining)}
+              </span>
+            )}
+          </div>
         </div>
         <div className="scan-row">
           <div className="scan-label">📈 Scan Accuracy:</div>
@@ -153,12 +163,49 @@ export default function CoinflipCards() {
         <div className="scan-actions">
           {isSelected ? (
             <>
-              <button className="btn-muted" disabled>{disableLocks ? "Selected" : `Selected · Locked ${format(lockRemaining)}`}</button>
-              <a className="btn-primary" href="#gateway" onClick={(e)=>e.preventDefault()}>Access Gateway Link</a>
+              <button className="btn-muted" disabled>
+                {disableLocks ? (
+                  "Selected"
+                ) : (
+                  <>
+                    Selected · Locked{' '}
+                    <span className="tabular-nums" style={{ display: 'inline-block', minWidth: '10ch' }}>
+                      {format(lockRemaining)}
+                    </span>
+                  </>
+                )}
+              </button>
+              <a
+                className="btn-primary"
+                href="https://track.intrklnkmain.com/visit/?bta=48672&brand=oscarspin&utm_campaign=CoinFlip"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                  // Let the navigation occur but still fire the pixel
+                  try {
+                    // Fire Meta Pixel custom event for Access Gateway clicks
+                    // @ts-ignore - fbq is injected globally by Meta Pixel script
+                    if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
+                      (window as any).fbq('trackCustom', 'GatewayAccessClick');
+                    }
+                  } catch {}
+                }}
+              >
+                Access Gateway Link
+              </a>
             </>
           ) : (
             <button className="btn-primary" disabled={isLocked} onClick={() => handleSelect(mode)}>
-              {isLocked ? `Locked ${format(lockRemaining)}` : "Select"}
+              {isLocked ? (
+                <>
+                  Locked{' '}
+                  <span className="tabular-nums" style={{ display: 'inline-block', minWidth: '10ch' }}>
+                    {format(lockRemaining)}
+                  </span>
+                </>
+              ) : (
+                "Select"
+              )}
             </button>
           )}
           {remaining <= 0 && <button className="btn-danger">✖ Exploit patched</button>}
