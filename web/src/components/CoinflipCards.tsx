@@ -184,7 +184,7 @@ export default function CoinflipCards() {
               </button>
               <a
                 className="btn-primary"
-                href="https://track.intrklnkmain.com/visit/?bta=48672&brand=oscarspin&utm_campaign=CoinFlip"
+                href="https://track.padrinopartners.com/visit/?bta=35286&brand=needforslots"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => {

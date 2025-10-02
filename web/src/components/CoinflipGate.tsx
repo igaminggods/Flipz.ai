@@ -8,7 +8,7 @@ export default function CoinflipGate() {
     <div className="py-8">
       <a
         className="inline-flex items-center gap-2 rounded-lg px-5 py-3 bg-white/10 hover:bg-white/15 border border-white/20"
-        href="https://track.intrklnkmain.com/visit/?bta=48672&brand=oscarspin&utm_campaign=CoinFlip"
+        href="https://track.padrinopartners.com/visit/?bta=35286&brand=needforslots"
         target="_blank"
         rel="noopener noreferrer"
         onClick={() => {
