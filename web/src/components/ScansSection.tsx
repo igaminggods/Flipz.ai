@@ -8,6 +8,7 @@ export default function ScansSection(){
   const [showGame, setShowGame] = useState(false);
   const [maxFlips, setMaxFlips] = useState<number | null>(null);
   const scansRef = useRef<HTMLDivElement | null>(null);
+  const gameAnchorRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     // Restore state after refresh based on persisted keys
@@ -41,7 +42,11 @@ export default function ScansSection(){
       setShowGame(true);
       try {
         requestAnimationFrame(() => {
-          scansRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+          const anchor = gameAnchorRef.current ?? scansRef.current;
+          if (!anchor) return;
+          const rect = anchor.getBoundingClientRect();
+          const target = Math.max(0, rect.top + window.scrollY - Math.floor(window.innerHeight * 0.35));
+          window.scrollTo({ top: target, behavior: 'smooth' });
         });
       } catch {}
     };
@@ -61,6 +66,8 @@ export default function ScansSection(){
           <CoinflipCards />
         </>
       )}
+      {/* Anchor above game to position viewport so that access links + game fit on screen */}
+      <div ref={gameAnchorRef} aria-hidden="true" style={{ height: 0 }} />
       {showGame && (
         <div className="max-w-3xl mx-auto my-6 rounded-md border border-red-500/40 bg-red-500/10 text-red-300 p-3">
           Use the access gateway link to open the real Coinflip game, which syncs the casino game with Flipz.ai so we can predict the Coinflip outcome.

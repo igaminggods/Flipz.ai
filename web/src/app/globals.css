@@ -189,8 +189,8 @@ body { background:
 @media (max-width: 640px){
   .flip-area{border-radius:14px}
   .coin-spot{top:30%}
-  .coin-inner{width:110px;height:110px}
-  .coin-face img{width:100px;height:100px}
+  .coin-inner{width:100px;height:100px}
+  .coin-face img{width:92px;height:92px}
   .flip-cta{bottom:calc(12px + env(safe-area-inset-bottom, 0px))}
   .btn-xl{padding:.7rem 1.1rem;font-size:.85rem}
 }
@@ -198,8 +198,8 @@ body { background:
 /* Extra small devices */
 @media (max-width: 380px){
   .coin-spot{top:28%}
-  .coin-inner{width:96px;height:96px}
-  .coin-face img{width:88px;height:88px}
+  .coin-inner{width:90px;height:90px}
+  .coin-face img{width:82px;height:82px}
   .flip-cta{bottom:calc(10px + env(safe-area-inset-bottom, 0px))}
   .btn-xl{padding:.6rem 1rem;font-size:.8rem}
 }
