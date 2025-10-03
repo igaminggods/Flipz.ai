@@ -9,6 +9,7 @@ export default function ScansSection(){
   const [maxFlips, setMaxFlips] = useState<number | null>(null);
   const scansRef = useRef<HTMLDivElement | null>(null);
   const gameAnchorRef = useRef<HTMLDivElement | null>(null);
+  const gameContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     // Restore state after refresh based on persisted keys
@@ -42,11 +43,30 @@ export default function ScansSection(){
       setShowGame(true);
       try {
         requestAnimationFrame(() => {
-          const anchor = gameAnchorRef.current ?? scansRef.current;
-          if (!anchor) return;
-          const rect = anchor.getBoundingClientRect();
-          const target = Math.max(0, rect.top + window.scrollY - Math.floor(window.innerHeight * 0.35));
-          window.scrollTo({ top: target, behavior: 'smooth' });
+          // Let DOM update first
+          setTimeout(() => {
+            const linkEl = document.querySelector('.scan-card .btn-primary[href*="padrinopartners"]') as HTMLElement | null;
+            const gameEl = gameContainerRef.current;
+            if (!linkEl || !gameEl) {
+              const fallback = gameAnchorRef.current ?? scansRef.current;
+              if (fallback) {
+                const r = fallback.getBoundingClientRect();
+                const top = Math.max(0, r.top + window.scrollY - Math.floor(window.innerHeight * 0.35));
+                window.scrollTo({ top, behavior: 'smooth' });
+              }
+              return;
+            }
+            const linkRect = linkEl.getBoundingClientRect();
+            const gameRect = gameEl.getBoundingClientRect();
+            const pageLinkTop = linkRect.top + window.scrollY;
+            const pageGameBottom = gameRect.bottom + window.scrollY;
+            // Aim to have link near top, but ensure game bottom fits in viewport
+            const paddingTop = Math.floor(window.innerHeight * 0.08);
+            let targetTop = Math.max(0, pageLinkTop - paddingTop);
+            const maxTopForGame = Math.max(0, pageGameBottom - window.innerHeight + 8);
+            targetTop = Math.min(targetTop, maxTopForGame);
+            window.scrollTo({ top: targetTop, behavior: 'smooth' });
+          }, 0);
         });
       } catch {}
     };
@@ -73,7 +93,11 @@ export default function ScansSection(){
           Use the access gateway link to open the real Coinflip game, which syncs the casino game with Flipz.ai so we can predict the Coinflip outcome.
         </div>
       )}
-      {showGame && <CoinflipGame className="reveal-in" maxFlips={maxFlips ?? undefined} />}
+      {showGame && (
+        <div ref={gameContainerRef}>
+          <CoinflipGame className="reveal-in" maxFlips={maxFlips ?? undefined} />
+        </div>
+      )}
     </section>
   );
 }
