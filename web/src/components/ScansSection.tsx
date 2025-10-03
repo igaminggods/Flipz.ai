@@ -10,6 +10,22 @@ export default function ScansSection(){
   const scansRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    // Restore state after refresh based on persisted keys
+    try {
+      const scanCompleted = typeof window !== 'undefined' ? localStorage.getItem('scan_completed') : null;
+      if (scanCompleted === '1') {
+        setShowScans(true);
+      }
+      const selected = typeof window !== 'undefined' ? localStorage.getItem('coinflip_selected') : null;
+      const lockRaw = typeof window !== 'undefined' ? localStorage.getItem('coinflip_lock_until') : null;
+      const lockUntil = lockRaw ? parseInt(lockRaw, 10) : null;
+      const lockRemaining = lockUntil ? Math.max(0, lockUntil - Date.now()) : 0;
+      if ((selected === 'instant' || selected === 'multiply') && lockRemaining > 0) {
+        setMaxFlips(selected === 'multiply' ? 4 : 2);
+        setShowGame(true);
+      }
+    } catch {}
+
     const onScan = () => {
       setShowScans(true);
       try {
