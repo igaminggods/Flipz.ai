@@ -228,7 +228,7 @@ export default function CoinflipCards() {
 
   return (
     <div className="grid md:grid-cols-2 gap-3 md:gap-6">
-      {card(
+      {(!selected || selected === "instant") && card(
         "COINFLIP SCAN #1",
         [
           "€20 per flip",
@@ -241,7 +241,7 @@ export default function CoinflipCards() {
         "instant"
       )}
 
-      {card(
+      {(!selected || selected === "multiply") && card(
         "COINFLIP SCAN #2",
         [
           "€100 per game",

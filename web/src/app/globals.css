@@ -191,7 +191,8 @@ body { background:
   .coin-spot{top:30%}
   .coin-inner{width:100px;height:100px}
   .coin-face img{width:92px;height:92px}
-  .flip-cta{bottom:calc(12px + env(safe-area-inset-bottom, 0px))}
+  /* Fix Play button to bottom for iPhone, using fixed to avoid moving while scrolling */
+  .flip-cta{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);z-index:50}
   .btn-xl{padding:.7rem 1.1rem;font-size:.85rem}
 }
 
