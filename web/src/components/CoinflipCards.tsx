@@ -227,7 +227,7 @@ export default function CoinflipCards() {
   };
 
   return (
-    <div className="grid md:grid-cols-2 gap-6">
+    <div className="grid md:grid-cols-2 gap-3 md:gap-6">
       {card(
         "COINFLIP SCAN #1",
         [
