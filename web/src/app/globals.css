@@ -210,7 +210,7 @@ body { background:
   .container-max{padding-left:.75rem;padding-right:.75rem}
   .section-title{font-size:1.5rem}
   .display-title{font-size:2rem}
-  .btn-primary,.btn-secondary{padding:.6rem .9rem;font-size:.9rem}
+  .btn-primary,.btn-secondary{padding:.65rem 1rem;font-size:.95rem}
   .pill{padding:.2rem .6rem;font-size:.7rem}
   .legend{gap:.75rem;font-size:.85rem}
   .title-icon{width:28px;height:28px}
@@ -218,17 +218,16 @@ body { background:
   .scan-card{padding:10px}
   /* Two-up grid phones: keep each card tight so both fit in viewport */
   .grid.grid-cols-2 .scan-card{padding:10px}
-  .grid.grid-cols-2 .scan-row{padding:2px 2px}
-  .grid.grid-cols-2 .scan-label,.grid.grid-cols-2 .scan-value{font-size:.78rem}
-  .grid.grid-cols-2 .scan-stats{gap:6px}
-  .grid.grid-cols-2 .scan-card .subtle{font-size:.68rem}
+  .grid.grid-cols-2 .scan-row{padding:4px 2px}
+  .grid.grid-cols-2 .scan-label,.grid.grid-cols-2 .scan-value{font-size:.8rem}
+  /* Hide description on mobile (original behavior) */
+  .scan-card .subtle{display:none}
   .scan-header{gap:.4rem}
   .scan-status{font-size:.72rem}
   .scan-slot{padding:6px 8px;font-size:.85rem}
   .scan-row{padding:4px 2px}
   .scan-label,.scan-value{font-size:.85rem}
-  /* Show concise description on mobile and keep cards compact */
-  .scan-card .subtle{display:block;font-size:.72rem;line-height:1.15;margin:.3rem 0}
+  /* Restore original mobile spacing */
   .scan-card .mb-3{margin-bottom:.4rem}
   .scan-card .mb-4{margin-bottom:.5rem}
   .scan-card .pill-badge{font-size:.8rem;padding:.2rem .45rem}
