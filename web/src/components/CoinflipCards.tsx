@@ -18,6 +18,20 @@ function useCountdown(storageKey: string, defaultMs: number) {
     localStorage.setItem(storageKey, String(end));
   }, [end, storageKey]);
 
+  // Refresh countdown when a new scan completes (event fired by ScanLock)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const onScanCompleted = () => {
+      try {
+        const raw = localStorage.getItem(storageKey);
+        const next = raw ? parseInt(raw, 10) : Date.now() + defaultMs;
+        if (!Number.isNaN(next)) setEnd(next);
+      } catch {}
+    };
+    window.addEventListener('scan-completed', onScanCompleted);
+    return () => window.removeEventListener('scan-completed', onScanCompleted);
+  }, [storageKey, defaultMs]);
+
   useEffect(() => {
     const id = setInterval(() => {
       setNow(Date.now());
@@ -133,7 +147,7 @@ export default function CoinflipCards() {
 
         <p className="subtle text-xs md:text-sm mb-3 text-left">
           {mode === "instant"
-            ? "In Coinflip (Instant), you start with €20 stake, make two separate flips, and win the multiplier of x3.9 turning your €20 to €78."
+            ? "In Coinflip (Instant), you start with €25 stake, make two separate flips, and win the multiplier of x3.9 turning your €25 to €78."
             : "In Coinflip (Multiply), you start with a €100 stake, flip the coin four times in a row, and win the multiplier of x15.52, turning your €100 into €1,552."}
         </p>
 
@@ -231,7 +245,7 @@ export default function CoinflipCards() {
       {(!selected || selected === "instant") && card(
         "COINFLIP SCAN #1",
         [
-          "€20 per flip",
+          "€25 per flip",
           "Number of flips: 2",
           "Return per flip: €39",
           "Total return: €78 (x3.9)",
