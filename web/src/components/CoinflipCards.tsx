@@ -151,33 +151,35 @@ export default function CoinflipCards() {
             : "In Coinflip (Multiply), you start with a €100 stake, flip the coin four times in a row, and win the multiplier of x15.52, turning your €100 into €1,552."}
         </p>
 
-        <div className="scan-row">
-          <div className="scan-label">💶 Bet Value:</div>
-          <div className="scan-value">{data[0]}</div>
-        </div>
-        <div className="scan-row">
-          <div className="scan-label">⚡ Number of Flips:</div>
-          <div className="scan-value">{mode === "instant" ? 2 : 4}</div>
-        </div>
-        <div className="scan-row">
-          <div className="scan-label">🔥 Total Return:</div>
-          <div className="scan-value pill-badge">{data[3]?.replace("Total return: ", "")}</div>
-        </div>
-        <div className="scan-row">
-          <div className="scan-label">⏱ Time Until Patch:</div>
-          <div className={`scan-value ${remaining <= 0 ? 'pill-danger' : 'pill-badge'}`}>
-            {remaining <= 0 ? (
-              'PATCHED'
-            ) : (
-              <span className="tabular-nums" style={{ display: 'inline-block', minWidth: '10ch' }}>
-                {format(remaining)}
-              </span>
-            )}
+        <div className="scan-stats grid grid-cols-2 md:block gap-2 mb-2">
+          <div className="scan-row">
+            <div className="scan-label">💶 Bet Value:</div>
+            <div className="scan-value">{data[0]}</div>
           </div>
-        </div>
-        <div className="scan-row">
-          <div className="scan-label">📈 Scan Accuracy:</div>
-          <div className="scan-value">{accuracy}%</div>
+          <div className="scan-row">
+            <div className="scan-label">⚡ Number of Flips:</div>
+            <div className="scan-value">{mode === "instant" ? 2 : 4}</div>
+          </div>
+          <div className="scan-row">
+            <div className="scan-label">🔥 Total Return:</div>
+            <div className="scan-value pill-badge">{data[3]?.replace("Total return: ", "")}</div>
+          </div>
+          <div className="scan-row">
+            <div className="scan-label">⏱ Time Until Patch:</div>
+            <div className={`scan-value ${remaining <= 0 ? 'pill-danger' : 'pill-badge'}`}>
+              {remaining <= 0 ? (
+                'PATCHED'
+              ) : (
+                <span className="tabular-nums" style={{ display: 'inline-block', minWidth: '10ch' }}>
+                  {format(remaining)}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="scan-row">
+            <div className="scan-label">📈 Scan Accuracy:</div>
+            <div className="scan-value">{accuracy}%</div>
+          </div>
         </div>
        
 
@@ -241,7 +243,7 @@ export default function CoinflipCards() {
   };
 
   return (
-    <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-2 md:gap-6">
+    <div className="grid grid-cols-2 gap-1.5 sm:gap-3 md:grid-cols-2 md:gap-6">
       {(!selected || selected === "instant") && card(
         "COINFLIP SCAN #1",
         [
