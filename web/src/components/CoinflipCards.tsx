@@ -131,7 +131,7 @@ export default function CoinflipCards() {
     const isLocked = !disableLocks && lockRemaining > 0 && selected !== null && selected !== mode;
     const isSelected = selected === mode && (!disableLocks ? lockRemaining > 0 : true);
     return (
-      <div className="scan-card">
+      <div className={`scan-card ${isSelected ? 'selected' : ''}`}>
         <div className="flex items-center justify-between mb-3">
           <div className="scan-header">
             <span>⚡</span>

@@ -220,8 +220,10 @@ body { background:
   .grid.grid-cols-2 .scan-card{padding:10px}
   .grid.grid-cols-2 .scan-row{padding:4px 2px}
   .grid.grid-cols-2 .scan-label,.grid.grid-cols-2 .scan-value{font-size:.8rem}
-  /* Hide description on mobile (original behavior) */
+  /* Hide description on mobile by default */
   .scan-card .subtle{display:none}
+  /* Show it when a card is selected */
+  .scan-card.selected .subtle{display:block;font-size:.78rem;line-height:1.2;margin:.35rem 0}
   .scan-header{gap:.4rem}
   .scan-status{font-size:.72rem}
   .scan-slot{padding:6px 8px;font-size:.85rem}
