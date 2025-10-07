@@ -62,6 +62,27 @@ export default function CoinflipCards() {
   // flip to true for debugging to disable lock behavior
   const disableLocks = false;
 
+  // Build Access Gateway link and persist click id from landing params
+  const [gatewayHref, setGatewayHref] = useState(
+    "https://track.padrinopartners.com/visit/?bta=35286&brand=needforslots"
+  );
+  const [eventId, setEventId] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const qs = new URLSearchParams(window.location.search);
+      const afp1 = qs.get('afp1');
+      const afp10 = qs.get('afp10') || 'Facebook';
+      if (afp1) {
+        document.cookie = `_clid=${encodeURIComponent(afp1)};path=/;max-age=${60 * 60 * 24 * 90}`;
+      }
+      const base = "https://track.padrinopartners.com/visit/?bta=35286&brand=needforslots";
+      const out = `${base}&afp1=${encodeURIComponent(afp1 || '')}&afp10=${encodeURIComponent(afp10)}`;
+      setGatewayHref(out);
+      setEventId(afp1 || undefined);
+    } catch {}
+  }, []);
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (disableLocks) {
@@ -153,7 +174,7 @@ export default function CoinflipCards() {
 
         <div className="scan-row">
           <div className="scan-label">💶 Bet Value:</div>
-          <div className="scan-value">{data[0]}</div>
+          <div className="scan-value">Any amount</div>
         </div>
         <div className="scan-row">
           <div className="scan-label">⚡ Number of Flips:</div>
@@ -161,7 +182,7 @@ export default function CoinflipCards() {
         </div>
         <div className="scan-row">
           <div className="scan-label">🔥 Total Return:</div>
-          <div className="scan-value pill-badge">{data[3]?.replace("Total return: ", "")}</div>
+          <div className="scan-value pill-badge">{mode === "instant" ? "x3.9" : "x15.52"}</div>
         </div>
         <div className="scan-row">
           <div className="scan-label">⏱ Time Until Patch:</div>
@@ -198,9 +219,9 @@ export default function CoinflipCards() {
               </button>
               <a
                 className="btn-primary"
-                href="https://track.padrinopartners.com/visit/?bta=35286&brand=needforslots"
+                href={gatewayHref}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="nofollow noopener noreferrer"
                 onClick={() => {
                   // Let the navigation occur but still fire the pixel
                   try {
@@ -212,7 +233,7 @@ export default function CoinflipCards() {
                       }).fbq
                     : undefined;
                 if (typeof fbq === 'function') {
-                  fbq('trackCustom', 'GatewayAccessClick');
+                  fbq('trackCustom', 'GatewayAccessClick', { event_id: eventId });
                 }
                   } catch {}
                 }}

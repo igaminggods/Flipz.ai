@@ -152,6 +152,29 @@ body { background:
 .btn-danger{display:inline-flex;align-items:center;justify-content:center;border-radius:.6rem;padding:.6rem 1rem;background:linear-gradient(135deg, rgba(239,68,68,.35), rgba(220,38,38,.35));border:1px solid rgba(239,68,68,.45);color:#fff;font-weight:700}
 .btn-muted{display:inline-flex;align-items:center;justify-content:center;border-radius:.6rem;padding:.6rem 1rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.75);font-weight:700}
 
+/* Winners ticker */
+.winners-wrap{position:relative;margin:14px auto 0;max-width:48rem}
+/* Reserve space to avoid layout shift when items are added/removed */
+.winners-fixed{height:132px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.winners-stream{display:flex;flex-direction:column;gap:.5rem;align-items:center;width:100%;transition:transform .28s ease}
+.winner-toast{display:flex;align-items:center;gap:.6rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:.75rem;padding:.5rem .75rem;box-shadow:0 8px 24px rgba(0,0,0,.25);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.winner-toast .toast-dot{width:8px;height:8px;border-radius:9999px;background:linear-gradient(135deg,#22c55e,#16a34a);box-shadow:0 0 10px rgba(34,197,94,.75)}
+.winner-toast .toast-text{display:inline-flex;align-items:center;gap:.5rem;font-weight:700;letter-spacing:.2px}
+.winner-toast .toast-user{color:#e5e7eb}
+.winner-toast .toast-game{color:#a5b4fc}
+.winner-toast .toast-amt{color:#86efac}
+.winner-toast .toast-sep{opacity:.5}
+/* Smooth pop-in without shifting siblings */
+.reveal-pop{animation:revealPop .35s cubic-bezier(.18,.9,.18,1.1) both}
+/* Fade out when removing */
+.fade-out{animation:fadeOut .42s ease forwards}
+@keyframes fadeOut{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(6px)}}
+@keyframes revealPop{0%{opacity:0;transform:translateY(8px) scale(.98)}100%{opacity:1;transform:translateY(0) scale(1)}}
+
+@media (max-width: 640px){
+  .winners-fixed{height:120px}
+}
+
 /* Quick Guide decor */
 .title-wrap{display:flex;align-items:center;justify-content:center;gap:.6rem}
 .title-icon{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:.9rem;background:linear-gradient(135deg, rgba(139,92,246,.35), rgba(6,182,212,.35));box-shadow:inset 0 0 18px rgba(255,255,255,.35), 0 8px 24px rgba(0,0,0,.35)}

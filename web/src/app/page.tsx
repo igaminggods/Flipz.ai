@@ -6,6 +6,7 @@ import FAQ from "@/components/FAQ";
 import SupportCTA from "@/components/SupportCTA";
 import Footer from "@/components/Footer";
 import ScansSection from "@/components/ScansSection";
+import WinnersTicker from "@/components/WinnersTicker";
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
       <Hero />
       <section id="scan" className="container-max py-8 text-center">
         <ScanLock />
+        <WinnersTicker className="mt-4" />
       </section>
       <HowItWorks />
 
