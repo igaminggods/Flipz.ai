@@ -1,13 +1,11 @@
 @import "tailwindcss";
 
-:root { --background: #060611; --foreground: #e8eaf2; --accent:#8b5cf6; --accent-2:#06b6d4; --accent-3:#22c55e; --card:#101226; }
+:root { --background: #000000; --foreground: #e8eaf2; --accent:#8b5cf6; --accent-2:#06b6d4; --accent-3:#22c55e; --card:#0a0a0a; }
 
 @theme inline { --color-background: var(--background); --color-foreground: var(--foreground); --font-sans: var(--font-sans); }
 
 body { background:
-  radial-gradient(1000px 500px at 30% -200px, rgba(139,92,246,.18), transparent 70%),
-  radial-gradient(900px 400px at 80% -150px, rgba(6,182,212,.16), transparent 70%),
-  linear-gradient(180deg,#0b0d22 0%,#070817 60%,#060611 100%);
+  linear-gradient(180deg,#000000 0%,#0a0a0a 50%,#000000 100%);
   color: var(--foreground); font-family: var(--font-sans), ui-sans-serif, system-ui; }
 
 /* Prevent unintended pinch zoom artifacts */
@@ -25,7 +23,7 @@ body { background:
 @media (prefers-color-scheme: dark) { body { color: #e7e7ea; } }
 
 .container-max{max-width:72rem;margin-left:auto;margin-right:auto;padding-left:1rem;padding-right:1rem}
-.card{border-radius:1rem;background:linear-gradient(180deg, rgba(139,92,246,0.06), rgba(6,182,212,0.05) 40%, rgba(34,197,94,0.05));background-color:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);box-shadow:0 6px 24px rgba(0,0,0,.28)}
+.card{border-radius:1rem;background:linear-gradient(180deg, rgba(139,92,246,0.03), rgba(6,182,212,0.025) 40%, rgba(34,197,94,0.025));background-color:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);box-shadow:0 6px 24px rgba(0,0,0,.35)}
 .glow-card{position:relative;overflow:hidden;transition:transform .2s ease, box-shadow .25s ease, border-color .2s ease;will-change:transform, box-shadow}
 .glow-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,0.15);box-shadow:
   0 12px 32px rgba(0,0,0,.32),
@@ -44,7 +42,7 @@ body { background:
 .btn-secondary:hover{background-color:rgba(255,255,255,0.12)}
 .pill{display:inline-flex;align-items:center;gap:.5rem;border-radius:9999px;padding:.25rem .75rem;font-size:.75rem;font-weight:700;background:linear-gradient(135deg, rgba(139,92,246,.22), rgba(6,182,212,.22));border:1px solid rgba(255,255,255,0.18)}
 .section-title{font-size:2rem;line-height:1.2;font-weight:800;letter-spacing:.2px}
-.subtle{color:rgba(255,255,255,0.7);font-size:.9rem}
+.subtle{color:rgba(255,255,255,0.68);font-size:.9rem}
 
 .logo-type{font-family:var(--font-display), var(--font-sans); letter-spacing:1px}
 .gradient-text{background-image:linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -157,7 +155,8 @@ body { background:
 /* Reserve space to avoid layout shift when items are added/removed */
 .winners-fixed{height:132px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .winners-stream{display:flex;flex-direction:column;gap:.5rem;align-items:center;width:100%;transition:transform .28s ease}
-.winner-toast{display:flex;align-items:center;gap:.6rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:.75rem;padding:.5rem .75rem;box-shadow:0 8px 24px rgba(0,0,0,.25);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.winner-toast{display:flex;align-items:center;gap:.6rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);border-radius:.75rem;padding:.5rem .75rem;box-shadow:0 8px 24px rgba(0,0,0,.25);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.winner-toast .toast-text{white-space:nowrap}
 .winner-toast .toast-dot{width:8px;height:8px;border-radius:9999px;background:linear-gradient(135deg,#22c55e,#16a34a);box-shadow:0 0 10px rgba(34,197,94,.75)}
 .winner-toast .toast-text{display:inline-flex;align-items:center;gap:.5rem;font-weight:700;letter-spacing:.2px}
 .winner-toast .toast-user{color:#e5e7eb}
@@ -185,26 +184,26 @@ body { background:
 
 /* Background FX */
 .fx-container{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.aurora{position:absolute;filter:blur(60px);opacity:.35;border-radius:50%;
+.aurora{position:absolute;filter:blur(60px);opacity:.08;border-radius:50%;
   background:conic-gradient(from 90deg, rgba(139,92,246,.6), rgba(6,182,212,.6), rgba(34,197,94,.6), rgba(139,92,246,.6));
   animation:float 16s ease-in-out infinite alternate}
-.a1{width:520px;height:520px;top:-120px;left:-120px;opacity:.40}
+.a1{width:520px;height:520px;top:-120px;left:-120px;opacity:.10}
 .a2{width:480px;height:480px;top:-80px;right:-140px;animation-duration:18s}
-.a3{width:600px;height:600px;bottom:-220px;left:20%;opacity:.25;animation-duration:22s}
+.a3{width:600px;height:600px;bottom:-220px;left:20%;opacity:.08;animation-duration:22s}
 @keyframes float{0%{transform:translate3d(0,0,0) rotate(0deg)}100%{transform:translate3d(0,40px,0) rotate(30deg)}}
 
 /* Subtle grid overlay */
 .fx-container::after{content:"";position:absolute;inset:0;background:
-  linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-  linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-  background-size: 40px 40px;mix-blend-mode:overlay;opacity:.25}
+  linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 40px 40px;mix-blend-mode:overlay;opacity:.10}
 
 /* Additional backdrop to reduce monotony */
 .vignette{position:absolute;inset:0;pointer-events:none;background:
-  radial-gradient(900px 360px at 50% 20%, rgba(255,255,255,0.06), transparent 70%),
-  radial-gradient(1100px 420px at 50% 100%, rgba(0,0,0,0.5), transparent 70%);
-  mix-blend-mode:normal;opacity:.9}
-.mesh{position:absolute;border-radius:50%;filter:blur(90px);opacity:.22}
+  radial-gradient(900px 360px at 50% 20%, rgba(255,255,255,0.02), transparent 70%),
+  radial-gradient(1100px 420px at 50% 100%, rgba(0,0,0,0.8), transparent 70%);
+  mix-blend-mode:normal;opacity:.98}
+.mesh{position:absolute;border-radius:50%;filter:blur(90px);opacity:.10}
 .m1{width:700px;height:700px;top:10%;left:-220px;background:radial-gradient(60% 60% at 50% 50%, rgba(139,92,246,.55), transparent 70%)}
 .m2{width:760px;height:760px;bottom:-260px;right:-160px;background:radial-gradient(60% 60% at 50% 50%, rgba(6,182,212,.45), transparent 70%)}
 

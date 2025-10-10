@@ -3,8 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 
 type Mode = "instant" | "multiply";
 
-const LOCK_KEY = "coinflip_lock_until"; // locks both after a selection
-const SELECTED_KEY = "coinflip_selected"; // which one selected
+const LOCK_KEY = "slots_lock_until";
 
 function useCountdown(storageKey: string, defaultMs: number) {
   const [end, setEnd] = useState<number>(() => {
@@ -18,7 +17,6 @@ function useCountdown(storageKey: string, defaultMs: number) {
     localStorage.setItem(storageKey, String(end));
   }, [end, storageKey]);
 
-  // Refresh countdown when a new scan completes (event fired by ScanLock)
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const onScanCompleted = () => {
@@ -53,16 +51,71 @@ function format(ms: number) {
     .padStart(2, "0")}m ${ss.toString().padStart(2, "0")}s`;
 }
 
-export default function CoinflipCards() {
+export default function SlotsCards() {
   const { remaining: remA } = useCountdown("patch_timer_instant", (1 * 60 + 13) * 60 * 1000);
   const { remaining: remB } = useCountdown("patch_timer_multiply", (1 * 60 + 16) * 60 * 1000);
 
   const [lockUntil, setLockUntil] = useState<number | null>(null);
-  const [selected, setSelected] = useState<Mode | null>(null);
-  // flip to true for debugging to disable lock behavior
   const disableLocks = false;
 
-  // Build Access Gateway link and persist click id from landing params
+  // Randomized scan content for slots page
+  const GAMES = [
+    "Gates of Olympus",
+    "Gates of Olympus 1000",
+    "Sweet Bonanza",
+    "Sweet Bonanza Xmas",
+    "Sugar Rush",
+    "Sugar Rush 1000",
+    "The Dog House",
+    "The Dog House Megaways",
+    "Big Bass Bonanza",
+    "Bigger Bass Bonanza",
+    "Big Bass Splash",
+    "Big Bass Amazon Xtreme",
+    "Big Bass Hold & Spinner",
+    "Starlight Princess",
+    "Starlight Princess 1000",
+    "Fruit Party",
+    "Fruit Party 2",
+  ];
+  const BONUS_BUYS = [20, 40, 60, 80, 100, 120];
+
+  type ScanConfig = { gameName: string; bonusBuy: number; totalX: number };
+  const [scanA, setScanA] = useState<ScanConfig | null>(null);
+  const [scanB, setScanB] = useState<ScanConfig | null>(null);
+
+  function randomInt(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+  function pick<T>(arr: T[]): T { return arr[randomInt(0, arr.length - 1)]; }
+
+  function genScans() {
+    // pick bonus buys where A < B
+    const idxB = randomInt(1, BONUS_BUYS.length - 1);
+    const idxA = randomInt(0, idxB - 1);
+    const bonusA = BONUS_BUYS[idxA];
+    const bonusB = BONUS_BUYS[idxB];
+
+    // total return between 3x and 11x, A < B
+    const totalA = Math.round((Math.random() * (5.5 - 3.0) + 3.0) * 100) / 100; // ~3.0–5.5x
+    const totalB = Math.round((Math.random() * (11.0 - 6.0) + 6.0) * 100) / 100; // ~6.0–11.0x
+
+    // distinct games if possible
+    const gameA = pick(GAMES);
+    let gameB = pick(GAMES);
+    if (gameB === gameA) gameB = pick(GAMES);
+
+    setScanA({ gameName: gameA, bonusBuy: bonusA, totalX: totalA });
+    setScanB({ gameName: gameB, bonusBuy: bonusB, totalX: totalB });
+  }
+
+  useEffect(() => { genScans(); }, []);
+  useEffect(() => {
+    const onScan = () => genScans();
+    window.addEventListener('scan-completed', onScan);
+    return () => window.removeEventListener('scan-completed', onScan);
+  }, []);
+
   const [gatewayHref, setGatewayHref] = useState(
     "https://track.padrinopartners.com/visit/?bta=35286&brand=needforslots"
   );
@@ -73,7 +126,6 @@ export default function CoinflipCards() {
       const qs = new URLSearchParams(window.location.search);
       const afp1 = qs.get('afp1');
       const afp10 = qs.get('afp10') || 'Facebook';
-      // Capture Meta browser identifiers if present to help CAPI match later
       const fbp = (document.cookie.split('; ').find((x) => x.startsWith('_fbp=')) || '').split('=')[1];
       const fbc = (document.cookie.split('; ').find((x) => x.startsWith('_fbc=')) || '').split('=')[1];
       if (afp1) {
@@ -91,18 +143,13 @@ export default function CoinflipCards() {
     if (disableLocks) {
       try {
         localStorage.removeItem(LOCK_KEY);
-        localStorage.removeItem(SELECTED_KEY);
       } catch {}
       setLockUntil(null);
-      setSelected(null);
       return;
     }
     const l = localStorage.getItem(LOCK_KEY);
-    const sRaw = localStorage.getItem(SELECTED_KEY);
     const lParsed = l ? parseInt(l, 10) : null;
-    const s = (sRaw === 'instant' || sRaw === 'multiply') ? (sRaw as Mode) : null;
     setLockUntil(lParsed && !Number.isNaN(lParsed) ? lParsed : null);
-    setSelected(s);
   }, [disableLocks]);
 
   useEffect(() => {
@@ -110,10 +157,8 @@ export default function CoinflipCards() {
     const id = setInterval(() => {
       if (Date.now() > lockUntil) {
         setLockUntil(null);
-        setSelected(null);
         try {
           localStorage.removeItem(LOCK_KEY);
-          localStorage.removeItem(SELECTED_KEY);
         } catch {}
       }
     }, 1000);
@@ -128,34 +173,16 @@ export default function CoinflipCards() {
 
   const lockRemaining = useMemo(() => disableLocks ? 0 : (lockUntil ? Math.max(0, lockUntil - nowTick) : 0), [lockUntil, disableLocks, nowTick]);
 
-  const handleSelect = (mode: Mode) => {
-    if (disableLocks) {
-      setLockUntil(null);
-      setSelected(mode);
-      try { window.dispatchEvent(new CustomEvent('scan-selected', { detail: { mode } })); } catch {}
-      return;
-    }
-    const until = Date.now() + 24 * 60 * 60 * 1000;
-    try {
-      localStorage.setItem(LOCK_KEY, String(until));
-      localStorage.setItem(SELECTED_KEY, mode);
-    } catch {}
-    setLockUntil(until);
-    setSelected(mode);
-    try { window.dispatchEvent(new CustomEvent('scan-selected', { detail: { mode } })); } catch {}
-  };
-
   const card = (
     title: string,
-    data: string[],
     accuracy: number,
     remaining: number,
-    mode: Mode
+    mode: Mode,
+    cfg: ScanConfig
   ) => {
-    const isLocked = !disableLocks && lockRemaining > 0 && selected !== null && selected !== mode;
-    const isSelected = selected === mode && (!disableLocks ? lockRemaining > 0 : true);
+    const isLocked = !disableLocks && lockRemaining > 0;
     return (
-      <div className={`scan-card ${isSelected ? 'selected' : ''}`}>
+      <div className={`scan-card`}>
         <div className="flex items-center justify-between mb-3">
           <div className="scan-header">
             <span>⚡</span>
@@ -166,26 +193,20 @@ export default function CoinflipCards() {
 
         <div className="scan-slot mb-4">
           <span>🎮 GAME NAME:</span>
-          <span>{mode === "instant" ? "Coinflip (Instant)" : "Coinflip (Multiply)"}</span>
+          <span>{cfg.gameName}</span>
         </div>
 
         <p className="subtle text-xs md:text-sm mb-3 text-left">
-          {mode === "instant"
-            ? "In Coinflip (Instant), you start with €25 stake, make two separate flips, and win the multiplier of x3.9 turning your €25 to €78."
-            : "In Coinflip (Multiply), you start with a €100 stake, flip the coin four times in a row, and win the multiplier of x15.52, turning your €100 into €1,552."}
+          Optimized bonus window detected for {cfg.gameName}. Use the configured bonus buy while the window remains open.
         </p>
 
         <div className="scan-row">
-          <div className="scan-label">💶 Bet Value:</div>
-          <div className="scan-value">Any amount</div>
-        </div>
-        <div className="scan-row">
-          <div className="scan-label">⚡ Number of Flips:</div>
-          <div className="scan-value">{mode === "instant" ? 2 : 4}</div>
+          <div className="scan-label">💶 Bonus buy:</div>
+          <div className="scan-value">€{cfg.bonusBuy}</div>
         </div>
         <div className="scan-row">
           <div className="scan-label">🔥 Total Return:</div>
-          <div className="scan-value pill-badge">{mode === "instant" ? "x3.9" : "x15.52"}</div>
+          <div className="scan-value pill-badge">{`x${cfg.totalX}`}</div>
         </div>
         <div className="scan-row">
           <div className="scan-label">⏱ Time Until Patch:</div>
@@ -203,62 +224,40 @@ export default function CoinflipCards() {
           <div className="scan-label">📈 Scan Accuracy:</div>
           <div className="scan-value">{accuracy}%</div>
         </div>
-       
 
         <div className="scan-actions">
-          {isSelected ? (
-            <>
-              <button className="btn-muted" disabled>
-                {disableLocks ? (
-                  "Selected"
-                ) : (
-                  <>
-                    Selected · Locked{' '}
-                    <span className="tabular-nums" style={{ display: 'inline-block', minWidth: '10ch' }}>
-                      {format(lockRemaining)}
-                    </span>
-                  </>
-                )}
-              </button>
-              <a
-                className="btn-primary"
-                href={gatewayHref}
-                target="_blank"
-                rel="nofollow noopener noreferrer"
-                onClick={() => {
-                  // Let the navigation occur but still fire the pixel
-                  try {
-                // Fire Meta Pixel custom event for Access Gateway clicks if available on window
-                const fbq =
-                  typeof window !== 'undefined'
-                    ? (window as unknown as {
-                        fbq?: (event: string, name: string, ...args: unknown[]) => void;
-                      }).fbq
-                    : undefined;
-                if (typeof fbq === 'function') {
-                  fbq('trackCustom', 'GatewayAccessClick', { event_id: eventId });
-                }
-                  } catch {}
-                }}
-              >
-                Access Gateway Link
-              </a>
-            </>
-          ) : (
-            <button className="btn-primary" disabled={isLocked} onClick={() => handleSelect(mode)}>
-              {isLocked ? (
-                <>
-                  Locked{' '}
-                  <span className="tabular-nums" style={{ display: 'inline-block', minWidth: '10ch' }}>
-                    {format(lockRemaining)}
-                  </span>
-                </>
-              ) : (
-                "Select"
-              )}
+          {isLocked ? (
+            <button className="btn-muted" disabled>
+              Locked · <span className="tabular-nums" style={{ display: 'inline-block', minWidth: '10ch' }}>{format(lockRemaining)}</span>
             </button>
+          ) : (
+            <a
+              className="btn-primary"
+              href={gatewayHref}
+              target="_blank"
+              rel="nofollow noopener noreferrer"
+              onClick={() => {
+                // apply 24h lock on click
+                const until = Date.now() + 24 * 60 * 60 * 1000;
+                try {
+                  localStorage.setItem(LOCK_KEY, String(until));
+                  setLockUntil(until);
+                } catch {}
+                try {
+                  const fbq =
+                    typeof window !== 'undefined'
+                      ? (window as unknown as { fbq?: (event: string, name: string, ...args: unknown[]) => void; }).fbq
+                      : undefined;
+                  if (typeof fbq === 'function') {
+                    fbq('trackCustom', 'GatewayAccessClick', { event_id: eventId });
+                  }
+                } catch {}
+              }}
+            >
+              Access Gateway Link
+            </a>
           )}
-          {remaining <= 0 && <button className="btn-danger">✖ Exploit patched</button>}
+          {remaining <= 0 && <button className="btn-danger">✖ Window closed</button>}
         </div>
       </div>
     );
@@ -266,33 +265,24 @@ export default function CoinflipCards() {
 
   return (
     <div className="grid md:grid-cols-2 gap-3 md:gap-6">
-      {(!selected || selected === "instant") && card(
-        "COINFLIP SCAN #1",
-        [
-          "€25 per flip",
-          "Number of flips: 2",
-          "Return per flip: €39",
-          "Total return: €78 (x3.9)",
-        ],
+      {scanA && card(
+        "SLOTS SCAN #1",
         89,
         remA,
-        "instant"
+        "instant",
+        scanA
       )}
 
-      {(!selected || selected === "multiply") && card(
-        "COINFLIP SCAN #2",
-        [
-          "€100 per game",
-          "Number of flips: 4",
-          "Return per flip: €39",
-          "Total return: €1552 (x15.52)",
-        ],
+      {scanB && card(
+        "SLOTS SCAN #2",
         93,
         remB,
-        "multiply"
+        "multiply",
+        scanB
       )}
     </div>
   );
 }
+
 
 

@@ -15,11 +15,13 @@ export default function CoinflipGate() {
       const qs = new URLSearchParams(window.location.search);
       const afp1 = qs.get('afp1');
       const afp10 = qs.get('afp10') || 'Facebook';
+      const fbp = (document.cookie.split('; ').find((x) => x.startsWith('_fbp=')) || '').split('=')[1];
+      const fbc = (document.cookie.split('; ').find((x) => x.startsWith('_fbc=')) || '').split('=')[1];
       if (afp1) {
         document.cookie = `_clid=${encodeURIComponent(afp1)};path=/;max-age=${60 * 60 * 24 * 90}`;
       }
       const base = "https://track.padrinopartners.com/visit/?bta=35286&brand=needforslots";
-      setGatewayHref(`${base}&afp1=${encodeURIComponent(afp1 || '')}&afp10=${encodeURIComponent(afp10)}`);
+      setGatewayHref(`${base}&afp1=${encodeURIComponent(afp1 || '')}&afp10=${encodeURIComponent(afp10)}${fbp ? `&fbp=${encodeURIComponent(fbp)}` : ''}${fbc ? `&fbc=${encodeURIComponent(fbc)}` : ''}`);
       setEventId(afp1 || undefined);
     } catch {}
   }, []);

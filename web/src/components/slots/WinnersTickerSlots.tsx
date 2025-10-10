@@ -4,77 +4,50 @@ import { useEffect, useMemo, useRef, useState } from "react";
 type WinnerItem = {
   id: number;
   username: string;
-  game: "Coinflip (Instant)" | "Coinflip (Multiply)";
-  amount: number; // in USD (or site currency)
+  game: string;
+  amount: number;
 };
 
 const NAMES_LEFT = [
-  "Lucky",
-  "Crypto",
-  "Spin",
-  "Flip",
-  "Shadow",
-  "Neon",
-  "Nova",
-  "Aqua",
-  "Vortex",
-  "Pixel",
-  "Luna",
-  "Echo",
-  "Blitz",
-  "Frost",
-  "Jet",
+  "Lucky","Crypto","Spin","Flip","Shadow","Neon","Nova","Aqua","Vortex","Pixel","Luna","Echo","Blitz","Frost","Jet",
 ];
 const NAMES_RIGHT = [
-  "Wolf",
-  "Rider",
-  "Whale",
-  "Hunter",
-  "Master",
-  "Ace",
-  "Guru",
-  "Maker",
-  "Wizard",
-  "Knight",
-  "Queen",
-  "King",
-  "Ninja",
-  "Ghost",
-  "Phoenix",
+  "Wolf","Rider","Whale","Hunter","Master","Ace","Guru","Maker","Wizard","Knight","Queen","King","Ninja","Ghost","Phoenix",
 ];
 
-function randomInt(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+function randomInt(min: number, max: number) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function randomUsername(): string { const left = NAMES_LEFT[randomInt(0, NAMES_LEFT.length - 1)]; const right = NAMES_RIGHT[randomInt(0, NAMES_RIGHT.length - 1)]; const num = randomInt(10, 9999); return `${left}${right}${num}`; }
+
+const SLOT_GAMES = [
+  "Gates of Olympus",
+  "Gates of Olympus 1000",
+  "Sweet Bonanza",
+  "Sweet Bonanza Xmas",
+  "Sugar Rush",
+  "Sugar Rush 1000",
+  "The Dog House",
+  "The Dog House Megaways",
+  "Big Bass Bonanza",
+  "Bigger Bass Bonanza",
+  "Big Bass Splash",
+  "Big Bass Amazon Xtreme",
+  "Big Bass Hold & Spinner",
+  "Starlight Princess",
+  "Starlight Princess 1000",
+  "Fruit Party",
+  "Fruit Party 2",
+];
+function pickGame(): string { return SLOT_GAMES[randomInt(0, SLOT_GAMES.length - 1)]; }
+
+function computeAmount(): number {
+  // Ensure winnings > €200. Model as bet (40–120€) * multiplier (5.0–16.0x).
+  const bet = randomInt(40, 120);
+  const multiplier = 5 + Math.random() * 11; // 5.0–16.0x
+  const amt = bet * multiplier;
+  return Math.round(amt * 100) / 100;
 }
 
-function randomUsername(): string {
-  const left = NAMES_LEFT[randomInt(0, NAMES_LEFT.length - 1)];
-  const right = NAMES_RIGHT[randomInt(0, NAMES_RIGHT.length - 1)];
-  const num = randomInt(10, 9999);
-  return `${left}${right}${num}`;
-}
-
-function pickGame(): WinnerItem["game"] {
-  // Bias towards Multiply per request
-  return Math.random() < 0.7 ? "Coinflip (Multiply)" : "Coinflip (Instant)";
-}
-
-function computeAmount(game: WinnerItem["game"]): number {
-  // Generate a random base bet and apply multiplier by game type
-  // Instant: lower amounts around 3.8x
-  // Multiply: higher amounts around 15.56x
-  if (game === "Coinflip (Instant)") {
-    const base = randomInt(2, 12); // small base stake
-    const multiplier = 3.8;
-    return Math.round(base * multiplier * 100) / 100;
-  } else {
-    const base = randomInt(3, 20); // medium base stake
-    const multiplier = 15.56;
-    return Math.round(base * multiplier * 100) / 100;
-  }
-}
-
-export default function WinnersTicker({ className }: { className?: string }) {
+export default function WinnersTickerSlots({ className }: { className?: string }) {
   const idRef = useRef(1);
   const mountedAt = useMemo(() => Date.now(), []);
 
@@ -87,11 +60,12 @@ export default function WinnersTicker({ className }: { className?: string }) {
       id: idRef.current++,
       username: randomUsername(),
       game,
-      amount: computeAmount(game),
+      amount: computeAmount(),
     };
   };
 
   useEffect(() => {
+    // initialize two fixed slots immediately
     setTopItem(createItem());
     setBottomItem(createItem());
   }, [mountedAt]);
@@ -100,9 +74,10 @@ export default function WinnersTicker({ className }: { className?: string }) {
     let cancelled = false;
     function advance() {
       if (cancelled) return;
+      // Simple swap without animation; slower cadence
       setTopItem(() => bottomItem ?? createItem());
       setBottomItem(() => createItem());
-      const nextDelay = randomInt(3600, 4600); // ~4s
+      const nextDelay = randomInt(3600, 4600); // ~4s transitions
       timer = window.setTimeout(advance, nextDelay);
     }
     let timer = window.setTimeout(advance, 4000);
@@ -119,7 +94,7 @@ export default function WinnersTicker({ className }: { className?: string }) {
               <span className="toast-sep">–</span>
               <span className="toast-game">{topItem.game}</span>
               <span className="toast-sep">–</span>
-              <span className="toast-amt">${topItem.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span className="toast-amt">€{topItem.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
           )}
         </div>
@@ -130,7 +105,7 @@ export default function WinnersTicker({ className }: { className?: string }) {
               <span className="toast-sep">–</span>
               <span className="toast-game">{bottomItem.game}</span>
               <span className="toast-sep">–</span>
-              <span className="toast-amt">${bottomItem.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span className="toast-amt">€{bottomItem.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
           )}
         </div>
@@ -138,5 +113,6 @@ export default function WinnersTicker({ className }: { className?: string }) {
     </div>
   );
 }
+
 
 
