@@ -117,7 +117,7 @@ export default function SlotsCards() {
   }, []);
 
   const [gatewayHref, setGatewayHref] = useState(
-    "https://track.padrinopartners.com/visit/?bta=35286&brand=needforslots"
+    "https://track.padrinopartners.com/visit/?bta=35286&brand=needforslots&utm_campaign=slots"
   );
   const [eventId, setEventId] = useState<string | undefined>(undefined);
   useEffect(() => {
@@ -131,7 +131,7 @@ export default function SlotsCards() {
       if (afp1) {
         document.cookie = `_clid=${encodeURIComponent(afp1)};path=/;max-age=${60 * 60 * 24 * 90}`;
       }
-      const base = "https://track.padrinopartners.com/visit/?bta=35286&brand=needforslots";
+      const base = "https://track.padrinopartners.com/visit/?bta=35286&brand=needforslots&utm_campaign=slots";
       const out = `${base}&afp1=${encodeURIComponent(afp1 || '')}&afp10=${encodeURIComponent(afp10)}${fbp ? `&fbp=${encodeURIComponent(fbp)}` : ''}${fbc ? `&fbc=${encodeURIComponent(fbc)}` : ''}`;
       setGatewayHref(out);
       setEventId(afp1 || undefined);
